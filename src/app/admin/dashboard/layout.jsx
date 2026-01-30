@@ -1,10 +1,14 @@
+'use client'
 
 import React from "react";
 import Link from "next/link";
+import ProtectedRoute from "@/components/ProtectedRoute";
+import LogoutButton from "@/components/LogoutButton";
 
 export default function AdminLayout({ children }) {
   return (
-    <div className="min-h-screen flex flex-col bg-gray-100">
+    <ProtectedRoute>
+      <div className="min-h-screen flex flex-col bg-gray-100">
       {/* Header */}
       <header className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-8 py-4 flex items-center justify-between">
@@ -31,12 +35,7 @@ export default function AdminLayout({ children }) {
           {/* Right Side */}
           <div className="flex items-center gap-6">
             {/* Logout Button */}
-            <Link
-            href="/"
-            className="bg-orange-500 hover:bg-orange-600 text-white px-5 py-2 rounded-md font-medium transition-colors shadow-sm"
-          >
-            Logout
-          </Link>
+            <LogoutButton />
           </div>
         </div>
       </header>
@@ -56,5 +55,6 @@ export default function AdminLayout({ children }) {
         </div>
       </footer>
     </div>
+    </ProtectedRoute>
   );
 }

@@ -1,7 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { loginAdmin } from '@/actions/admin/auth.actions'
+import { createBrowserClient } from '@/lib/supabase/client'
 import {
   Card,
   CardHeader,
@@ -16,6 +18,29 @@ export default function AdminLoginPage() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [checking, setChecking] = useState(true)
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const supabase = createBrowserClient()
+
+  useEffect(() => {
+    checkExistingSession()
+  }, [])
+
+  async function checkExistingSession() {
+    try {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) {
+        const redirect = searchParams.get('redirect') || '/admin/dashboard'
+        router.push(redirect)
+        return
+      }
+    } catch (error) {
+      console.error('Session check failed:', error)
+    } finally {
+      setChecking(false)
+    }
+  }
 
   async function handleSubmit(e) {
     e.preventDefault()
@@ -28,6 +53,17 @@ export default function AdminLoginPage() {
       setError(result.error)
       setLoading(false)
     }
+  }
+
+  if (checking) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-50 via-white to-orange-100">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Checking session...</p>
+        </div>
+      </div>
+    )
   }
 
   return (
