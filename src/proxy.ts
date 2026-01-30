@@ -22,9 +22,9 @@ export default function proxy(request: NextRequest) {
         getAll() {
           return request.cookies.getAll()
         },
-        setAll(cookiesToSet) {
+        setAll(cookiesToSet: Array<{ name: string; value: string; options?: any }>) {
           // Set cookies in both request and response
-          cookiesToSet.forEach(({ name, value, options }) => {
+          cookiesToSet.forEach(({ name, value, options }: { name: string; value: string; options?: any }) => {
             request.cookies.set(name, value)
             response.cookies.set(name, value, options)
           })
